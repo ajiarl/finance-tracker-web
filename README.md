@@ -9,21 +9,18 @@ Aplikasi pencatatan keuangan pribadi dengan estetika **Neobrutalism**.
 - **Routing**: React Router v6
 - **Forms**: React Hook Form + Zod
 
-## Fitur Utama (Fase 1: Autentikasi & Layout)
-- **Desain Neobrutalism**: Border hitam tebal, bayangan solid, dan warna kontras tinggi.
-- **Autentikasi**:
-  - Halaman Login & Register dengan validasi Zod.
-  - Integrasi Laravel Sanctum (Stateful Authentication).
-  - Fitur Lihat/Sembunyikan Password.
-- **Dashboard & Transaksi**:
-  - Ringkasan saldo, pemasukan, dan pengeluaran riil.
-  - Progress bar anggaran dengan indikator warna dinamis.
-  - **FastAddModal**: Modal input cepat untuk transaksi dengan preset nominal.
-  - Integrasi TanStack Query untuk manajemen cache dan sinkronisasi data.
-- **Layout Sistem**:
-  - Topbar dengan navigasi brand.
-  - Bottom Navigation mobile-first dengan z-index management.
-  - Struktur AppLayout dengan Outlet dinamis.
+## Fitur Utama
+- **Sistem Notifikasi (Fase 7: Aggressive Notifications)**:
+  - **Smart Threshold Logic**: Notifikasi hanya dipicu untuk ambang batas tertinggi (50%, 75%, 90%, 100%) untuk mencegah spam.
+  - **Auto-Reset State**: Status notifikasi otomatis direset jika pengeluaran turun (transaksi dihapus/diedit), memastikan alert tetap akurat.
+  - **Visual Alert Neobrutalist**: Toast notifikasi dengan kode warna agresif (Merah/Kuning/Cyan) dan desain bold.
+  - **Dashboard Cleanup**: Perbaikan akurasi badge status global dan visualisasi chart yang lebih seimbang.
+
+- **Fase 1-6 (Core Features)**:
+  - **Autentikasi**: Login & Register dengan validasi Zod & Laravel Sanctum.
+  - **Dashboard**: Ringkasan saldo riil, progress anggaran dinamis, dan chart interaktif.
+  - **Transaksi**: Input cepat (FastAddModal), CRUD transaksi, dan kategori sistem vs user.
+  - **Akun & Rekonsiliasi**: Manajemen akun bank/cash dan fitur penyesuaian saldo.
 
 ## Aturan Desain Global
 1. **Border**: Minimal 2px/4px solid hitam.

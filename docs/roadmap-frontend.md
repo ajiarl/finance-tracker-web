@@ -321,7 +321,7 @@ src/
 
 ---
 
-## FASE 6 — Core: Budgets & Alerts
+## FASE 6 — Core: Budgets & Alerts [DONE]
 > Estimasi: 3–4 hari
 
 ### 6.1 Halaman Daftar Budget
@@ -355,7 +355,7 @@ src/
 
 ---
 
-## FASE 7 — Supporting: Notifikasi
+## FASE 7 — Supporting: Notifikasi [DONE]
 > Estimasi: 2 hari
 
 ### 7.1 Notification Center
@@ -395,7 +395,7 @@ src/
 
 ---
 
-## FASE 8 — Supporting: Import CSV
+## FASE 8 — Supporting: Import CSV [NEXT GOAL]
 > Estimasi: 4–5 hari | Kompleks karena multi-step flow
 
 ### 8.1 Step 1 — Upload File
@@ -584,9 +584,9 @@ FASE 2: Dashboard       ████████░░░░░░░░░░�
 FASE 3: Transaksi       ██████████░░░░░░░░░░░░░░  (4-5 hari)
 FASE 4: Akun            ██████░░░░░░░░░░░░░░░░░░  (2-3 hari)
 FASE 5: Kategori        ████░░░░░░░░░░░░░░░░░░░░  (2 hari)
-FASE 6: Budget          ████████░░░░░░░░░░░░░░░░  (3-4 hari)
-FASE 7: Notifikasi      ████░░░░░░░░░░░░░░░░░░░░  (2 hari)
-FASE 8: Import CSV      ██████████░░░░░░░░░░░░░░  (4-5 hari)
+FASE 6: Budget          ████████████████████████  (DONE)
+FASE 7: Notifikasi      ████████████████████████  (DONE)
+FASE 8: Import CSV      ██████████░░░░░░░░░░░░░░  (NEXT GOAL)
 FASE 9: Reports         ████░░░░░░░░░░░░░░░░░░░░  (2 hari)
 FASE 10: AI Insights    ████████░░░░░░░░░░░░░░░░  (3-4 hari)
 FASE 11: Settings       ████░░░░░░░░░░░░░░░░░░░░  (1-2 hari)
