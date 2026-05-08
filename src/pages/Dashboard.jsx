@@ -1,14 +1,17 @@
 // src/pages/Dashboard.jsx
-// Halaman utama aplikasi: summary cards, placeholder grafik, progress anggaran, dan FAB tambah transaksi.
-// Data di-fetch via TanStack Query dari GET /api/dashboard dengan handle loading & error state.
+// Halaman utama aplikasi: saldo, ringkasan kartu, grafik tren, breakdown kategori, dan progress anggaran.
+// Terintegrasi dengan backend via TanStack Query untuk data riil.
 
-import { useQuery } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
-import { Plus, TrendingUp, TrendingDown, Wallet, AlertCircle, BarChart3 } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { Plus, TrendingUp, TrendingDown, Wallet, AlertCircle } from 'lucide-react'
 import { useAuth } from '../store/authStore'
-import { getDashboardSummary } from '../api/dashboard'
+import { getDashboardSummary, getDashboardCharts } from '../api/dashboard'
+
 import FastAddModal from '../components/shared/FastAddModal'
+import TrendChart from '../components/shared/TrendChart'
+import CategoryPieChart from '../components/shared/CategoryPieChart'
+import BudgetProgress from '../components/shared/BudgetProgress'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 const formatIDR = (amount) =>
@@ -26,296 +29,181 @@ const currentMonth = () => {
 
 // ── Sub-komponen ──────────────────────────────────────────────────────────────
 
-// Skeleton loader — kotak abu-abu beranimasi
+// Skeleton loader
 function Skeleton({ className = '' }) {
   return (
     <div className={`bg-gray-200 animate-pulse ${className}`} />
   )
 }
 
-// Summary card utama (Saldo)
-function BalanceCard({ balance, isLoading }) {
+// Ringkasan kartu (Pemasukan/Pengeluaran)
+function SummaryCard({ label, value, icon: Icon, bg, isLoading }) {
   return (
-    <div className="bg-[#FAFF00] border-4 border-black shadow-[6px_6px_0px_0px_#000] p-4 text-left">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-black uppercase tracking-widest text-black/60">
-          Total Saldo
-        </span>
-        <div className="bg-black p-1.5">
-          <Wallet size={16} className="text-[#FAFF00]" />
-        </div>
-      </div>
-      {isLoading ? (
-        <Skeleton className="h-9 w-48 mt-1" />
-      ) : (
-        <p className="text-3xl font-black text-black tracking-tight">
-          {formatIDR(balance)}
-        </p>
-      )}
-      <p className="text-xs font-bold text-black/50 mt-1 uppercase">
-        {new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
-      </p>
-    </div>
-  )
-}
-
-// Card pemasukan / pengeluaran
-function FlowCard({ label, amount, type, isLoading }) {
-  const isIncome = type === 'income'
-  return (
-    <div
-      className={[
-        'border-4 border-black shadow-[4px_4px_0px_0px_#000] p-3 text-left',
-        isIncome ? 'bg-white' : 'bg-white',
-      ].join(' ')}
-    >
-      <div className="flex items-center gap-1.5 mb-2">
-        <div
-          className={[
-            'p-1 border-2 border-black',
-            isIncome ? 'bg-green-400' : 'bg-red-400',
-          ].join(' ')}
-        >
-          {isIncome
-            ? <TrendingUp size={13} className="text-black" strokeWidth={2.5} />
-            : <TrendingDown size={13} className="text-black" strokeWidth={2.5} />
-          }
-        </div>
-        <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">
+    <div className={`flex flex-col gap-1 p-4 border-2 border-black shadow-[4px_4px_0px_0px_#000] ${bg} text-left rounded-none`}>
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-black uppercase tracking-widest text-black/60">
           {label}
         </span>
+        <Icon size={16} strokeWidth={3} className="text-black/40" />
       </div>
       {isLoading ? (
-        <Skeleton className="h-6 w-28" />
+        <Skeleton className="h-6 w-24 mt-1 rounded-none" />
       ) : (
-        <p
-          className={[
-            'text-lg font-black tracking-tight',
-            isIncome ? 'text-green-700' : 'text-red-600',
-          ].join(' ')}
-        >
-          {isIncome ? '+' : '-'}{formatIDR(amount)}
-        </p>
+        <span className="text-base font-black leading-tight text-black">
+          {formatIDR(value)}
+        </span>
       )}
-    </div>
-  )
-}
-
-// Progress bar anggaran — blocky, gaya retro
-function BudgetProgressItem({ budget }) {
-  const pct = Math.min(budget.percentage_used ?? 0, 100)
-  const isWarning = pct >= 75 && pct < 100
-  const isDanger  = pct >= 100
-
-  const barColor = isDanger
-    ? 'bg-red-500'
-    : isWarning
-    ? 'bg-[#FAFF00]'
-    : 'bg-green-400'
-
-  return (
-    <div className="border-2 border-black p-3 bg-white shadow-[3px_3px_0px_0px_#000] text-left">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-black text-black truncate max-w-[55%]">
-          {budget.name}
-        </span>
-        <div className="flex items-center gap-1.5">
-          <span
-            className={[
-              'text-xs font-black px-1.5 py-0.5 border-2 border-black',
-              isDanger
-                ? 'bg-red-500 text-white'
-                : isWarning
-                ? 'bg-[#FAFF00] text-black'
-                : 'bg-white text-black',
-            ].join(' ')}
-          >
-            {Math.round(pct)}%
-          </span>
-        </div>
-      </div>
-
-      {/* Track bergaris keras (bukan rounded) */}
-      <div className="w-full h-4 bg-gray-100 border-2 border-black overflow-hidden">
-        <div
-          className={`h-full ${barColor} border-r-2 border-black transition-all duration-500`}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-
-      <div className="flex justify-between mt-1.5">
-        <span className="text-[10px] font-bold text-gray-500">
-          {formatIDR(budget.spent)}
-        </span>
-        <span className="text-[10px] font-bold text-gray-400">
-          / {formatIDR(budget.amount)}
-        </span>
-      </div>
     </div>
   )
 }
 
 // ── Halaman Utama ─────────────────────────────────────────────────────────────
-export default function Dashboard() {
-  const navigate = useNavigate()
-  const { user } = useAuth()
-  const [isModalOpen, setIsModalOpen] = useState(false)
+export function FAB({ onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      aria-label="Tambah baru"
+      className="fixed bottom-24 right-6 z-[100] flex items-center justify-center w-12 h-12 bg-[#FAFF00] border-[3px] border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all cursor-pointer"
+    >
+      <Plus size={20} strokeWidth={3} className="text-black" />
+    </button>
+  )
+}
 
-  const firstName = user?.name?.split(' ')[0] ?? 'Kamu'
+export default function Dashboard() {
+  const { user } = useAuth()
+  const [modalOpen, setModalOpen] = useState(false)
   const month = currentMonth()
 
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['dashboard', month],
     queryFn: () => getDashboardSummary(month),
-    staleTime: 1000 * 60 * 2, // 2 menit
+    staleTime: 1000 * 60 * 2,
   })
+
+  const { data: chartData, isLoading: isChartLoading } = useQuery({
+    queryKey: ['dashboardCharts', month],
+    queryFn: () => getDashboardCharts(month),
+    staleTime: 1000 * 60 * 5,
+  })
+
+  // ── Data Mappers ───────────────────────────────────────────────────────────
+  
+  // Trend Chart: Ambil 7 hari terakhir
+  const trend = (chartData?.daily_cashflow || []).slice(-7)
+  const chartLabels = trend.map(d => new Date(d.date).toLocaleDateString('id-ID', { weekday: 'short' }))
+  const chartIncome = trend.map(d => d.income)
+  const chartExpense = trend.map(d => d.expense)
+
+  // Pie Chart: Map category_breakdown
+  const pieCategories = (chartData?.category_breakdown || []).map(c => ({
+    label: c.name,
+    value: c.total
+  }))
+
+  // Budget Progress: Map dari dashboard summary
+  const mappedBudgets = (data?.budgets || []).map(b => ({
+    id: b.id,
+    name: b.name,
+    spent: b.spent,
+    limit: b.amount,
+  }))
 
   // ── Error State ────────────────────────────────────────────────────────────
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 gap-4">
-        <div className="bg-red-50 border-4 border-red-500 shadow-[4px_4px_0px_0px_rgb(239,68,68)] p-5 w-full max-w-sm text-center">
+        <div className="bg-red-50 border-4 border-red-500 shadow-[4px_4px_0px_0px_#000] p-5 w-full max-w-sm text-center rounded-none">
           <AlertCircle size={32} className="mx-auto mb-2 text-red-500" />
           <p className="font-black text-red-600 uppercase text-sm">Gagal memuat data</p>
-          <p className="text-xs text-red-400 mt-1">Periksa koneksi dan coba lagi.</p>
+          <button onClick={refetch} className="mt-4 px-6 py-3 bg-black text-white font-black text-xs uppercase border-2 border-black rounded-none shadow-[4px_4px_0px_#555] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_#555] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all duration-100">
+            Coba Lagi
+          </button>
         </div>
-        <button
-          onClick={refetch}
-          className="px-4 py-2 bg-black text-white font-black text-sm uppercase tracking-widest border-2 border-black shadow-[4px_4px_0px_0px_#555] hover:translate-x-px hover:translate-y-px hover:shadow-[2px_2px_0px_0px_#555] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none transition-all duration-100"
-        >
-          Coba Lagi
-        </button>
       </div>
     )
   }
 
-  // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="px-4 pt-4 pb-6 space-y-5 relative">
+    <div className="px-4 pt-5 pb-24 flex flex-col gap-5 font-sans relative">
 
-      {/* Greeting */}
+      {/* Sapaan */}
       <div className="text-left">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
-          Selamat datang,
+        <p className="text-xs font-black uppercase tracking-widest text-gray-400">
+          Ringkasan Keuangan
         </p>
-        <h1 className="text-2xl font-black text-black uppercase tracking-tight leading-tight">
-          {firstName}
+        <h1 className="text-2xl font-black text-black leading-tight mt-0.5 uppercase tracking-tight">
+          Halo, {user?.name?.split(' ')[0] || 'Tamu'}
         </h1>
       </div>
 
-      {/* ── Summary Cards ──────────────────────────────────────────────────── */}
-      <section>
-        <BalanceCard balance={data?.total_balance} isLoading={isLoading} />
-        <div className="grid grid-cols-2 gap-3 mt-3">
-          <FlowCard
-            label="Pemasukan"
-            amount={data?.income_this_month}
-            type="income"
-            isLoading={isLoading}
-          />
-          <FlowCard
-            label="Pengeluaran"
-            amount={data?.expense_this_month}
-            type="expense"
-            isLoading={isLoading}
-          />
-        </div>
-      </section>
-
-      {/* ── Placeholder Grafik ─────────────────────────────────────────────── */}
-      <section>
-        <div className="flex items-center gap-2 mb-2">
-          <h2 className="text-xs font-black uppercase tracking-widest text-black">
-            Tren Pengeluaran
-          </h2>
-          <div className="flex-1 h-0.5 bg-black" />
-        </div>
-        <div className="border-4 border-black shadow-[4px_4px_0px_0px_#000] bg-white p-4 h-44 flex flex-col items-center justify-center gap-2">
-          <div className="w-12 h-12 border-4 border-black bg-gray-100 flex items-center justify-center">
-            <BarChart3 size={24} className="text-black" />
-          </div>
-          <p className="text-xs font-black uppercase tracking-widest text-gray-400">
-            Grafik segera hadir
+      {/* Saldo Total - Desain Retro Hitam Kuning */}
+      <div className="bg-black border-4 border-black shadow-[6px_6px_0px_0px_#FAFF00] p-5 text-left rounded-none">
+        <div className="flex items-center justify-between mb-1">
+          <p className="text-xs font-black uppercase tracking-widest text-white/50">
+            Total Saldo
           </p>
-          {/* Chart.js akan dirender di sini */}
+          <Wallet size={16} className="text-[#FAFF00]/50" />
         </div>
-      </section>
-
-      {/* ── Progress Anggaran ──────────────────────────────────────────────── */}
-      <section>
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2 w-full">
-            <h2 className="text-xs font-black uppercase tracking-widest text-black">
-              Anggaran Bulan Ini
-            </h2>
-            <div className="flex-1 h-0.5 bg-black" />
-          </div>
-          <button
-            onClick={() => navigate('/budgets')}
-            className="text-[10px] font-black uppercase tracking-widest text-gray-500 underline decoration-2 ml-2 whitespace-nowrap"
-          >
-            Lihat Semua
-          </button>
-        </div>
-
         {isLoading ? (
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-20 border-2 border-gray-300" />
-            ))}
-          </div>
-        ) : data?.budgets?.length > 0 ? (
-          <div className="space-y-3">
-            {data.budgets.slice(0, 4).map((b) => (
-              <BudgetProgressItem key={b.id} budget={b} />
-            ))}
-          </div>
+          <Skeleton className="h-9 w-48 mt-1 bg-white/10 rounded-none" />
         ) : (
-          <div className="border-4 border-dashed border-gray-300 p-6 text-center">
-            <p className="text-sm font-black uppercase text-gray-400">
-              Belum ada anggaran
-            </p>
-            <button
-              onClick={() => navigate('/budgets')}
-              className="mt-2 text-xs font-black underline decoration-2 text-black"
-            >
-              + Buat Anggaran
-            </button>
-          </div>
+          <p className="text-3xl font-black text-[#FAFF00] tracking-tight">
+            {formatIDR(data?.total_balance)}
+          </p>
         )}
-      </section>
+        <p className="text-[10px] font-black text-white/40 mt-2 uppercase tracking-widest">
+          Per hari ini • {new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' })}
+        </p>
+      </div>
 
-      {/* FAB - Floating Add Button */}
-      <FAB onClick={() => setIsModalOpen(true)} />
+      {/* Pemasukan & Pengeluaran Grid */}
+      <div className="grid grid-cols-2 gap-3">
+        <SummaryCard 
+          label="Pemasukan"   
+          value={data?.income_this_month}   
+          icon={TrendingUp}   
+          bg="bg-green-50" 
+          isLoading={isLoading}
+        />
+        <SummaryCard 
+          label="Pengeluaran" 
+          value={data?.expense_this_month}  
+          icon={TrendingDown} 
+          bg="bg-red-50"   
+          isLoading={isLoading}
+        />
+      </div>
 
-      {/* Fast Add Transaction Modal */}
-      <FastAddModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      {/* ── Charts & Progress ────────────────────────────────────────── */}
+      {isChartLoading ? (
+        <div className="flex flex-col gap-5">
+          <Skeleton className="h-[280px] border-4 border-black" />
+          <Skeleton className="h-[350px] border-4 border-black" />
+          <Skeleton className="h-48 border-4 border-black" />
+        </div>
+      ) : (
+        <>
+          <TrendChart 
+            labels={chartLabels.length > 0 ? chartLabels : undefined}
+            income={chartIncome.length > 0 ? chartIncome : undefined}
+            expense={chartExpense.length > 0 ? chartExpense : undefined}
+          />
+          <CategoryPieChart 
+            categories={pieCategories.length > 0 ? pieCategories : undefined}
+          />
+          <BudgetProgress 
+            budgets={mappedBudgets.length > 0 ? mappedBudgets : undefined} 
+          />
+        </>
+      )}
+
+      {/* Floating Action Button */}
+      <FAB onClick={() => setModalOpen(true)} />
+
+      {/* Fast Add Modal */}
+      <FastAddModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
 
     </div>
-  )
-}
-
-// ── FAB (Fast Add Transaction) ─────────────────────────────────────────────
-export function FAB({ onClick }) {
-  const navigate = useNavigate()
-  return (
-    <button
-      onClick={onClick}
-      aria-label="Tambah transaksi"
-      className={[
-        'fixed bottom-20 right-4 z-50',
-        'w-14 h-14 bg-black text-white',
-        'border-4 border-black shadow-[5px_5px_0px_0px_#555]',
-        'flex items-center justify-center',
-        'hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[3px_3px_0px_0px_#555]',
-        'active:translate-x-[4px] active:translate-y-[4px] active:shadow-none',
-        'transition-all duration-100',
-      ].join(' ')}
-    >
-      <Plus size={28} strokeWidth={3} />
-    </button>
   )
 }
