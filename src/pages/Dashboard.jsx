@@ -4,7 +4,7 @@
 
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Plus, TrendingUp, TrendingDown, Wallet, AlertCircle, Bug } from 'lucide-react'
+import { Plus, TrendingUp, TrendingDown, Wallet, AlertCircle } from 'lucide-react'
 import { useAuth } from '../store/authStore'
 import { getDashboardSummary, getDashboardCharts } from '../api/dashboard'
 import toast from 'react-hot-toast'
@@ -74,7 +74,6 @@ export function FAB({ onClick }) {
 export default function Dashboard() {
   const { user } = useAuth()
   const [modalOpen, setModalOpen] = useState(false)
-  const [showDebug, setShowDebug] = useState(false)
   const month = currentMonth()
 
   const { data, isLoading, isError, refetch } = useQuery({
@@ -88,34 +87,6 @@ export default function Dashboard() {
     queryFn: () => getDashboardCharts(month),
     staleTime: 1000 * 60 * 5,
   })
-
-  const triggerTestNotif = (severity) => {
-    const isCritical = severity === 'critical';
-    const isWarning = severity === 'warning';
-    const headerBg = isCritical ? 'bg-[#FF0000]' : isWarning ? 'bg-[#FAFF00]' : 'bg-[#00E0FF]';
-    const headerText = isCritical ? 'text-white' : 'text-black';
-    const title = isCritical ? 'ANGGARAN HABIS' : isWarning ? 'ANGGARAN HAMPIR HABIS' : 'TIP ANGGARAN';
-    const message = isCritical 
-      ? 'PENGELUARAN MAKAN ANDA SUDAH MENCAPAI 100% DARI LIMIT RP1.000.000.' 
-      : isWarning 
-        ? 'PENGELUARAN HIUBURAN ANDA SUDAH MENCAPAI 90% DARI LIMIT.' 
-        : 'COBA BUAT ANGGARAN UNTUK KATEGORI TRANSPORTASI ANDA.';
-
-    toast.custom((t) => (
-      <div
-        className={`${t.visible ? 'animate-in slide-in-from-top-full' : 'animate-out fade-out-0 slide-out-to-top-full'} max-w-md w-full bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] rounded-none overflow-hidden pointer-events-auto`}
-      >
-        <div className={`flex items-center justify-between p-3 border-b-4 border-black ${headerBg} ${headerText}`}>
-          <h4 className="font-black text-sm uppercase italic">{title}</h4>
-          <button onClick={() => toast.dismiss(t.id)} className="w-7 h-7 border-2 border-black bg-white text-black flex items-center justify-center font-black">✕</button>
-        </div>
-        <div className="p-4 flex flex-col gap-3 text-left">
-          <p className="text-xs font-black uppercase leading-tight text-black">{message}</p>
-          <div className="text-[9px] font-black uppercase bg-black text-white px-2 py-1 w-fit">DETAIL →</div>
-        </div>
-      </div>
-    ));
-  }
 
   // ── Data Mappers ───────────────────────────────────────────────────────────
   
@@ -164,34 +135,15 @@ export default function Dashboard() {
   return (
     <div className="px-4 pt-5 pb-24 flex flex-col gap-5 font-sans relative">
 
-      {/* Sapaan & Debug Toggle */}
-      <div className="flex items-start justify-between">
-        <div className="text-left">
-          <p className="text-xs font-black uppercase tracking-widest text-gray-400">
-            Ringkasan Keuangan
-          </p>
-          <h1 className="text-2xl font-black text-black leading-tight mt-0.5 uppercase tracking-tight">
-            Halo, {user?.name?.split(' ')[0] || 'Tamu'}
-          </h1>
-        </div>
-        <button 
-          onClick={() => setShowDebug(!showDebug)}
-          className="p-2 border-2 border-black bg-white hover:bg-black hover:text-white transition-all shadow-[2px_2px_0px_0px_#000] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]"
-          title="Debug Mode"
-        >
-          <Bug size={16} />
-        </button>
+      {/* Sapaan */}
+      <div className="text-left">
+        <p className="text-xs font-black uppercase tracking-widest text-gray-400">
+          Ringkasan Keuangan
+        </p>
+        <h1 className="text-2xl font-black text-black leading-tight mt-0.5 uppercase tracking-tight">
+          Halo, {user?.name?.split(' ')[0] || 'Tamu'}
+        </h1>
       </div>
-
-      {/* Debug Panel */}
-      {showDebug && (
-        <div className="bg-gray-100 border-2 border-dashed border-black p-3 flex flex-wrap gap-2 animate-in fade-in slide-in-from-top-2">
-          <p className="w-full text-[9px] font-black uppercase text-gray-500 mb-1">Mode Pengembang: Uji Notifikasi</p>
-          <button onClick={() => triggerTestNotif('info')} className="bg-[#00E0FF] border-2 border-black px-2 py-1 text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_#000] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">Info</button>
-          <button onClick={() => triggerTestNotif('warning')} className="bg-[#FAFF00] border-2 border-black px-2 py-1 text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_#000] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">Warning</button>
-          <button onClick={() => triggerTestNotif('critical')} className="bg-[#FF0000] text-white border-2 border-black px-2 py-1 text-[10px] font-black uppercase shadow-[2px_2px_0px_0px_#000] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]">Critical</button>
-        </div>
-      )}
 
       {/* Saldo Total - Desain Retro Hitam Kuning */}
       <div className="bg-black border-4 border-black shadow-[6px_6px_0px_0px_#FAFF00] p-5 text-left rounded-none">

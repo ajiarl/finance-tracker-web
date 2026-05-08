@@ -30,19 +30,6 @@ export function useNotifications(enabled = true) {
     enabled,
   });
 
-  // TEST TOAST ON MOUNT
-  useEffect(() => {
-    toast.success('Sistem Notifikasi Aktif', {
-      duration: 3000,
-      style: {
-        borderRadius: '0',
-        border: '2px solid black',
-        fontWeight: '900',
-        textTransform: 'uppercase',
-        fontSize: '10px',
-      },
-    });
-  }, []);
 
   // Detection: Show toast when new notifications arrive
   useEffect(() => {
