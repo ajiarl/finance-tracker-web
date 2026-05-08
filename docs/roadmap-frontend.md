@@ -251,10 +251,10 @@ src/
 
 ---
 
-## FASE 4 — Core: Manajemen Akun
+## FASE 4 — Core: Manajemen Akun [DONE]
 > Estimasi: 2–3 hari
 
-### 4.1 Halaman Daftar Akun
+### 4.1 Halaman Daftar Akun [DONE]
 **Apa:** List akun user dengan saldo masing-masing, badge tipe (Cash, Bank, E-Wallet, dll.), dan tombol tambah akun.
 
 **API:** `GET /api/accounts`
@@ -263,7 +263,7 @@ src/
 
 ---
 
-### 4.2 Tambah & Edit Akun
+### 4.2 Tambah & Edit Akun [DONE]
 **Apa:** Form create/edit akun: nama, tipe (cash/bank/e-wallet/credit/investment), saldo awal.
 
 **API:**
@@ -274,7 +274,7 @@ src/
 
 ---
 
-### 4.3 Rekonsiliasi Akun
+### 4.3 Rekonsiliasi Akun [DONE]
 **Apa:** Form rekonsiliasi: input saldo aktual, preview selisih, konfirmasi. Backend otomatis membuat transaksi penyesuaian.
 
 **API:** `POST /api/accounts/{account}/reconcile`
@@ -295,10 +295,10 @@ src/
 
 ---
 
-## FASE 5 — Core: Kategori
+## FASE 5 — Core: Kategori [DONE]
 > Estimasi: 2 hari
 
-### 5.1 Halaman Manajemen Kategori
+### 5.1 Halaman Manajemen Kategori [DONE]
 **Apa:** List kategori user + kategori sistem (dengan label "Sistem" dan tidak bisa diedit/hapus). Tab filter: Semua / Pengeluaran / Pemasukan. Tombol tambah kategori user.
 
 **API:** `GET /api/categories?type=income|expense`
@@ -309,7 +309,7 @@ src/
 
 ---
 
-### 5.2 Form Kategori
+### 5.2 Form Kategori [DONE]
 **Apa:** Modal create/edit: nama, tipe, ikon (text input untuk nama icon), color picker (harus format `#RRGGBB`).
 
 **API:**
