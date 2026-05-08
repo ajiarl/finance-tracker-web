@@ -59,16 +59,16 @@ export function useNotifications(enabled = true) {
         const latest = res.data?.[0];
         if (!latest || (isFirstLoadWithUnread && latest.is_read)) return;
 
-        const isBudgetAlert = latest.type === 'budget_alert';
-        const isCritical = isBudgetAlert && (latest.data?.severity === 'critical' || (latest.data?.percentage_used ?? 0) >= 100);
-        const isWarning = isBudgetAlert && (latest.data?.severity === 'warning' || (latest.data?.percentage_used ?? 0) >= 80);
+        const isBudgetAlert = latest.type === 'budget_alert' || !!latest.data?.budget_id;
+        const isCritical = latest.data?.severity === 'critical' || (latest.data?.percentage_used ?? 0) >= 100;
+        const isWarning = !isCritical && (latest.data?.severity === 'warning' || (latest.data?.percentage_used ?? 0) >= 80);
         const isInfo = !isCritical && !isWarning;
 
         if (isCritical) {
           new Audio(ALERT_SOUND).play().catch(() => {});
         }
 
-        // Determinasu warna header berdasarkan tingkat keparahan
+        // Mapping warna header sesuai permintaan (Hierarchy Visual)
         const headerBg = isCritical ? 'bg-[#FF0000]' : isWarning ? 'bg-[#FAFF00]' : 'bg-[#00E0FF]';
         const headerText = isCritical ? 'text-white' : 'text-black';
 
