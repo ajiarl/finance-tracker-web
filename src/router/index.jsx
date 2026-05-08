@@ -11,6 +11,7 @@ import Transactions from '../pages/Transactions'
 import Budgets from '../pages/Budgets'
 import Accounts from '../pages/Accounts'
 import Categories from '../pages/Categories'
+import Notifications from '../pages/Notifications'
 import Settings from '../pages/Settings'
 import ProtectedRoute from './ProtectedRoute'
 
@@ -40,11 +41,8 @@ const router = createBrowserRouter([
       { path: '/budgets',       element: <Budgets /> },
       { path: '/accounts',      element: <Accounts /> },
       { path: '/categories',    element: <Categories /> },
+      { path: '/notifications', element: <Notifications /> },
       { path: '/settings',      element: <Settings /> },
-      {
-        path: '/notifications',
-        element: <div className="p-4 font-black">Notifikasi (Dalam Pengembangan)</div>,
-      },
     ],
   },
 ])

@@ -76,21 +76,28 @@ export default function Dashboard() {
   const month = currentMonth()
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ['dashboard', month],
+    queryKey: ['dashboard', 'summary', month],
     queryFn: () => getDashboardSummary(month),
     staleTime: 1000 * 60 * 2,
   })
 
   const { data: chartData, isLoading: isChartLoading } = useQuery({
-    queryKey: ['dashboardCharts', month],
+    queryKey: ['dashboard', 'charts', month],
     queryFn: () => getDashboardCharts(month),
     staleTime: 1000 * 60 * 5,
   })
 
   // ── Data Mappers ───────────────────────────────────────────────────────────
   
-  // Trend Chart: Ambil 7 hari terakhir
-  const trend = (chartData?.daily_cashflow || []).slice(-7)
+  // Trend Chart: Tampilkan 7 hari terakhir (sampai hari ini jika bulan ini)
+  const allCashflow = chartData?.daily_cashflow || []
+  const todayISO = new Date().toISOString().split('T')[0]
+  const todayIndex = allCashflow.findIndex(d => d.date === todayISO)
+  
+  const trend = todayIndex !== -1 
+    ? allCashflow.slice(Math.max(0, todayIndex - 6), todayIndex + 1)
+    : allCashflow.slice(-7)
+
   const chartLabels = trend.map(d => new Date(d.date).toLocaleDateString('id-ID', { weekday: 'short' }))
   const chartIncome = trend.map(d => d.income)
   const chartExpense = trend.map(d => d.expense)

@@ -101,6 +101,7 @@ export default function FastAddModal({ isOpen, onClose }) {
       queryClient.invalidateQueries({ queryKey: ['dashboard'] })
       queryClient.invalidateQueries({ queryKey: ['transactions'] })
       queryClient.invalidateQueries({ queryKey: ['budgets'] })
+      queryClient.invalidateQueries({ queryKey: ['notifications'] })
       onClose()
     },
   })

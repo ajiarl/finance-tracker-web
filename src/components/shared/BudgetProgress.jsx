@@ -76,7 +76,35 @@ export default function BudgetProgress() {
     return null; // Sembunyikan sepenuhnya jika tidak ada anggaran
   }
 
-  const overCount = budgets.filter((b) => b.percentage > 90).length;
+  const maxPercentage = budgets.length > 0 ? Math.max(...budgets.map(b => b.percentage || 0)) : 0;
+
+  const getStatusConfig = () => {
+    if (maxPercentage >= 100) {
+      return { 
+        label: 'Kritis', 
+        bg: 'bg-red-500', 
+        text: 'text-white', 
+        icon: AlertTriangle 
+      };
+    }
+    if (maxPercentage >= 80) {
+      return { 
+        label: 'Waspada', 
+        bg: 'bg-yellow-400', 
+        text: 'text-black', 
+        icon: AlertTriangle 
+      };
+    }
+    return { 
+      label: 'Aman', 
+      bg: 'bg-green-400', 
+      text: 'text-black', 
+      icon: CheckCircle2 
+    };
+  };
+
+  const status = getStatusConfig();
+  const StatusIcon = status.icon;
 
   return (
     <div className="bg-white border-4 border-black shadow-[6px_6px_0px_0px_#000] text-left rounded-none">
@@ -84,17 +112,10 @@ export default function BudgetProgress() {
         <h3 className="font-black text-sm uppercase tracking-widest text-black">
           Anggaran Bulan Ini
         </h3>
-        {overCount > 0 ? (
-          <span className="flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-black bg-red-500 text-white border-2 border-black rounded-none uppercase tracking-wider">
-            <AlertTriangle size={12} strokeWidth={3} />
-            {overCount} Peringatan
-          </span>
-        ) : (
-          <span className="flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-black bg-green-400 text-black border-2 border-black rounded-none uppercase tracking-wider">
-            <CheckCircle2 size={12} strokeWidth={3} />
-            Aman
-          </span>
-        )}
+        <span className={`flex items-center gap-1.5 px-2 py-0.5 text-[10px] font-black border-2 border-black rounded-none uppercase tracking-wider ${status.bg} ${status.text}`}>
+          <StatusIcon size={12} strokeWidth={3} />
+          {status.label}
+        </span>
       </div>
 
       <div className="p-4 flex flex-col gap-3">

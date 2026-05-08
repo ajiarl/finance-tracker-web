@@ -38,7 +38,7 @@ const pct = (val, total) => ((val / total) * 100).toFixed(1)
 
 const buildOptions = (total) => ({
   responsive: true,
-  maintainAspectRatio: false,
+  maintainAspectRatio: true,
   cutout: '55%',
   plugins: {
     legend: { display: false },
@@ -136,7 +136,7 @@ export default function CategoryPieChart({ categories }) {
       <div className="p-4 flex flex-col gap-4">
 
         {/* ── Doughnut — lubang tengah KOSONG, tidak ada overlay ── */}
-        <div className="mx-auto" style={{ width: 200, height: 200 }}>
+        <div className="mx-auto" style={{ width: 240, height: 240 }}>
           <Doughnut data={data} options={options} />
         </div>
 
