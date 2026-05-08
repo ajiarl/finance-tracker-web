@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import * as notifApi from '../api/notifications';
 
@@ -9,8 +10,11 @@ export const notificationKeys = {
   list: () => ['notifications', 'list'],
 };
 
+const ALERT_SOUND = 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3';
+
 export function useNotifications(enabled = true) {
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const prevCountRef = useRef(null);
 
   // 1. The Heartbeat (Unread Count)
@@ -26,41 +30,96 @@ export function useNotifications(enabled = true) {
     enabled,
   });
 
+  // TEST TOAST ON MOUNT
+  useEffect(() => {
+    toast.success('Sistem Notifikasi Aktif', {
+      duration: 3000,
+      style: {
+        borderRadius: '0',
+        border: '2px solid black',
+        fontWeight: '900',
+        textTransform: 'uppercase',
+        fontSize: '10px',
+      },
+    });
+  }, []);
+
   // Detection: Show toast when new notifications arrive
   useEffect(() => {
     const currentCount = countQuery.data?.unread_count ?? 0;
     const prevCount = prevCountRef.current;
 
-    if (prevCount !== null && currentCount > prevCount) {
-      const delta = currentCount - prevCount;
-      toast.custom((t) => (
-        <div
-          className={`${
-            t.visible ? 'animate-in slide-in-from-top-full' : 'animate-out fade-out-0 slide-out-to-top-full'
-          } max-w-md w-full bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-4 flex items-center justify-between gap-4 rounded-none pointer-events-auto`}
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#FAFF00] border-2 border-black flex items-center justify-center rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              <span className="text-lg">🔔</span>
-            </div>
-            <p className="text-xs font-black uppercase tracking-tight text-black">
-              {delta} Notifikasi Baru Tersedia
-            </p>
-          </div>
-          <button
-            onClick={() => toast.dismiss(t.id)}
-            className="flex-shrink-0 w-8 h-8 border-2 border-black bg-white flex items-center justify-center font-black hover:bg-black hover:text-white transition-colors rounded-none"
+    // Trigger logic if count increases OR if it's the first load and we have unread items
+    const isNew = prevCount !== null && currentCount > prevCount;
+    const isFirstLoadWithUnread = prevCount === null && currentCount > 0;
+
+    if (isNew || isFirstLoadWithUnread) {
+      // Fetch latest to determine type
+      notifApi.fetchNotifications().then((res) => {
+        const latest = res.data?.[0];
+        if (!latest || (isFirstLoadWithUnread && latest.is_read)) return;
+
+        const isBudgetAlert = latest.type === 'budget_alert';
+        const isCritical = isBudgetAlert && (latest.data?.severity === 'critical' || (latest.data?.percentage_used ?? 0) >= 100);
+        const isWarning = isBudgetAlert && (latest.data?.severity === 'warning' || (latest.data?.percentage_used ?? 0) >= 80);
+
+        if (isCritical) {
+          new Audio(ALERT_SOUND).play().catch(() => {});
+        }
+
+        toast.custom((t) => (
+          <div
+            onClick={() => {
+              toast.dismiss(t.id);
+              navigate(isBudgetAlert ? '/budgets' : '/notifications');
+            }}
+            className={`
+              ${t.visible ? 'animate-in slide-in-from-top-full' : 'animate-out fade-out-0 slide-out-to-top-full'}
+              max-w-md w-full border-4 border-black shadow-[8px_8px_0px_0px_#000] p-4 flex flex-col gap-2 rounded-none cursor-pointer pointer-events-auto transition-all
+              ${isCritical ? 'bg-[#FF0000] text-white' : isWarning ? 'bg-[#FAFF00] text-black' : 'bg-white text-black'}
+            `}
           >
-            ✕
-          </button>
-        </div>
-      ), { duration: 5000 });
-      // Sync list if user is on notification page
-      qc.invalidateQueries({ queryKey: notificationKeys.list() });
+            <div className="flex items-center justify-between border-b-2 border-black pb-2 mb-1">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">{isBudgetAlert ? '🚨' : '🔔'}</span>
+                <h4 className="font-black text-sm uppercase tracking-tighter italic">
+                  {latest.title || (isBudgetAlert ? 'ANGGARAN KRITIS!' : 'NOTIFIKASI BARU')}
+                </h4>
+              </div>
+              <button 
+                onClick={(e) => { e.stopPropagation(); toast.dismiss(t.id); }}
+                className="w-8 h-8 border-2 border-black bg-white text-black flex items-center justify-center font-black hover:bg-black hover:text-white transition-colors rounded-none"
+              >✕</button>
+            </div>
+            
+            <div className="py-1">
+              <p className="text-xs font-black leading-tight uppercase tracking-wide">
+                {latest.message}
+              </p>
+            </div>
+
+            <div className="mt-2 flex items-center justify-between">
+              <div className="text-[9px] font-black uppercase bg-black text-white px-2 py-1 flex items-center gap-1">
+                {isBudgetAlert ? 'PERIKSA SEKARANG' : 'LIHAT DETAIL'} 
+                <span className="animate-pulse">→</span>
+              </div>
+              {isCritical && (
+                <span className="text-[10px] font-black uppercase animate-bounce">URGENT!</span>
+              )}
+            </div>
+          </div>
+        ), { 
+          duration: isCritical ? 10000 : 5000,
+          id: `notif-${latest.id}` 
+        });
+        
+        // Sync list if user is on notification page
+        qc.invalidateQueries({ queryKey: notificationKeys.list() });
+      });
     }
 
     prevCountRef.current = currentCount;
-  }, [countQuery.data?.unread_count, qc]);
+  }, [countQuery.data?.unread_count, qc, navigate]);
 
   return {
     unreadCount: countQuery.data?.unread_count ?? 0,
