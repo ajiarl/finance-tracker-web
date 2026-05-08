@@ -5,8 +5,12 @@
 import { Outlet, Link } from 'react-router-dom'
 import { Bell } from 'lucide-react'
 import BottomNav from './BottomNav'
+import { useNotifications } from '../../hooks/useNotifications'
+import NotificationBadge from '../notifications/NotificationBadge'
 
 export default function AppLayout() {
+  const { unreadCount } = useNotifications()
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
 
@@ -31,6 +35,7 @@ export default function AppLayout() {
             className="relative flex items-center justify-center w-9 h-9 border-2 border-black bg-white rounded-none shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all duration-100"
           >
             <Bell size={18} strokeWidth={2.5} className="text-black" />
+            <NotificationBadge count={unreadCount} />
           </Link>
 
         </div>
