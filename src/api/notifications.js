@@ -14,3 +14,6 @@ export const markAllAsRead = () =>
 
 export const deleteNotification = (id) => 
   api.delete(`/notifications/${id}`).then(res => res.data);
+
+export const clearAllNotifications = () => 
+  api.delete('/notifications/clear-all').then(res => res.data);

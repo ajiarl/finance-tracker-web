@@ -81,9 +81,8 @@ export function useNotifications(enabled = true) {
           >
             <div className="flex items-center justify-between border-b-2 border-black pb-2 mb-1">
               <div className="flex items-center gap-2">
-                <span className="text-xl">{isBudgetAlert ? '🚨' : '🔔'}</span>
                 <h4 className="font-black text-sm uppercase tracking-tighter italic">
-                  {latest.title || (isBudgetAlert ? 'ANGGARAN KRITIS!' : 'NOTIFIKASI BARU')}
+                  {latest.title || (isBudgetAlert ? 'ANGGARAN KRITIS' : 'NOTIFIKASI BARU')}
                 </h4>
               </div>
               <button 
@@ -104,7 +103,7 @@ export function useNotifications(enabled = true) {
                 <span className="animate-pulse">→</span>
               </div>
               {isCritical && (
-                <span className="text-[10px] font-black uppercase animate-bounce">URGENT!</span>
+                <span className="text-[10px] font-black uppercase animate-bounce">PENTING!</span>
               )}
             </div>
           </div>
@@ -237,6 +236,33 @@ export function useDeleteNotification() {
       return { prevCount, prevList };
     },
     onError: (err, id, context) => {
+      qc.setQueryData(notificationKeys.count(), context.prevCount);
+      qc.setQueryData(notificationKeys.list(), context.prevList);
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: notificationKeys.all });
+    }
+  });
+}
+
+export function useClearAllNotifications() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: notifApi.clearAllNotifications,
+    onMutate: async () => {
+      await qc.cancelQueries({ queryKey: notificationKeys.all });
+
+      const prevCount = qc.getQueryData(notificationKeys.count());
+      const prevList = qc.getQueryData(notificationKeys.list());
+
+      // Optimistic update: empty everything
+      qc.setQueryData(notificationKeys.count(), { unread_count: 0 });
+      qc.setQueryData(notificationKeys.list(), { data: [], meta: { total: 0, unread_count: 0 } });
+
+      return { prevCount, prevList };
+    },
+    onError: (err, variables, context) => {
       qc.setQueryData(notificationKeys.count(), context.prevCount);
       qc.setQueryData(notificationKeys.list(), context.prevList);
     },

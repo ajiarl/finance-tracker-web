@@ -1,16 +1,22 @@
-import React from 'react';
-import { Bell, CheckCheck, ArrowLeft } from 'lucide-react';
+import { Bell, CheckCheck, ArrowLeft, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useNotificationList, useMarkAsRead, useMarkAllAsRead } from '../hooks/useNotifications.jsx';
+import { useNotificationList, useMarkAsRead, useMarkAllAsRead, useClearAllNotifications } from '../hooks/useNotifications.jsx';
 import NotificationList from '../components/notifications/NotificationList';
 
 export default function Notifications() {
   const { data, isLoading } = useNotificationList();
   const markAsRead = useMarkAsRead();
   const markAllAsRead = useMarkAllAsRead();
+  const clearAll = useClearAllNotifications();
 
   const notifications = data?.data || [];
   const unreadCount = data?.meta?.unread_count || 0;
+
+  const handleClearAll = () => {
+    if (window.confirm('HAPUS SEMUA NOTIFIKASI? TINDAKAN INI TIDAK DAPAT DIBATALKAN.')) {
+      clearAll.mutate();
+    }
+  };
 
   return (
     <div className="px-4 pt-4 pb-24 relative min-h-screen">
@@ -32,6 +38,16 @@ export default function Notifications() {
         </div>
         
         <div className="flex gap-2">
+          {notifications.length > 0 && (
+            <button
+              onClick={handleClearAll}
+              disabled={clearAll.isPending}
+              title="Hapus semua"
+              className="flex items-center justify-center w-10 h-10 bg-red-500 text-white border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all"
+            >
+              <Trash2 size={20} strokeWidth={3} />
+            </button>
+          )}
           {unreadCount > 0 && (
             <button
               onClick={() => markAllAsRead.mutate()}
