@@ -7,12 +7,14 @@ import { Bell } from 'lucide-react'
 import BottomNav from './BottomNav'
 import { useNotifications } from '../../hooks/useNotifications.jsx'
 import NotificationBadge from '../notifications/NotificationBadge'
+import { Toaster } from 'react-hot-toast'
 
 export default function AppLayout() {
   const { unreadCount } = useNotifications()
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
+      <Toaster position="top-right" reverseOrder={false} />
 
       {/* ── Topbar ───────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 bg-white border-b-4 border-black">

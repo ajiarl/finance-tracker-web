@@ -1,8 +1,9 @@
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { Bell, Target, Info, AlertTriangle, XCircle, ChevronRight } from 'lucide-react';
+import { Bell, Target, Info, AlertTriangle, XCircle, ChevronRight, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useDeleteNotification } from '../../hooks/useNotifications.jsx';
 
 const TYPE_CONFIG = {
   budget_alert: {
@@ -29,6 +30,7 @@ const TYPE_CONFIG = {
 
 export default function NotificationCard({ notification, onMarkAsRead }) {
   const navigate = useNavigate();
+  const deleteMutation = useDeleteNotification();
   const config = TYPE_CONFIG[notification.type] || TYPE_CONFIG.info;
   const Icon = config.icon;
 
@@ -44,6 +46,13 @@ export default function NotificationCard({ notification, onMarkAsRead }) {
       navigate('/reports');
     } else if (notification.data?.suggestion === 'create_budget') {
       navigate(`/budgets?category_id=${notification.data.category_id}`);
+    }
+  };
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    if (window.confirm('Hapus notifikasi ini?')) {
+      deleteMutation.mutate(notification.id);
     }
   };
 
@@ -67,12 +76,22 @@ export default function NotificationCard({ notification, onMarkAsRead }) {
       {/* Content */}
       <div className="flex-1 min-w-0 text-left">
         <div className="flex justify-between items-start mb-1">
-          <h3 className={`text-sm font-black uppercase tracking-tight truncate ${notification.is_read ? 'text-gray-500' : 'text-black'}`}>
-            {notification.title}
-          </h3>
-          <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 whitespace-nowrap ml-2">
-            {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: id })}
-          </span>
+          <div className="min-w-0 flex-1">
+            <h3 className={`text-sm font-black uppercase tracking-tight truncate ${notification.is_read ? 'text-gray-500' : 'text-black'}`}>
+              {notification.title}
+            </h3>
+            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400 whitespace-nowrap block">
+              {formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: id })}
+            </span>
+          </div>
+          
+          <button 
+            onClick={handleDelete}
+            className="flex-shrink-0 ml-2 p-2 border-2 border-black bg-white hover:bg-red-500 hover:text-white transition-colors shadow-[2px_2px_0px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+            title="Hapus"
+          >
+            <Trash2 size={14} strokeWidth={3} />
+          </button>
         </div>
         <p className={`text-xs leading-relaxed ${notification.is_read ? 'text-gray-400' : 'text-black font-bold'}`}>
           {notification.message}

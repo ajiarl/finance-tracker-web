@@ -205,3 +205,43 @@ export function useMarkAllAsRead() {
     }
   });
 }
+
+export function useDeleteNotification() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: notifApi.deleteNotification,
+    onMutate: async (id) => {
+      await qc.cancelQueries({ queryKey: notificationKeys.all });
+
+      const prevCount = qc.getQueryData(notificationKeys.count());
+      const prevList = qc.getQueryData(notificationKeys.list());
+
+      // Optimistic update: remove from list
+      qc.setQueryData(notificationKeys.list(), (old) => {
+        if (!old?.data) return old;
+        return {
+          ...old,
+          data: old.data.filter(n => n.id !== id)
+        };
+      });
+
+      // Optimistic update: adjust count if it was unread
+      const deletedNotif = prevList?.data?.find(n => n.id === id);
+      if (deletedNotif && !deletedNotif.is_read) {
+        qc.setQueryData(notificationKeys.count(), (old) => ({
+          unread_count: Math.max(0, (old?.unread_count ?? 1) - 1)
+        }));
+      }
+
+      return { prevCount, prevList };
+    },
+    onError: (err, id, context) => {
+      qc.setQueryData(notificationKeys.count(), context.prevCount);
+      qc.setQueryData(notificationKeys.list(), context.prevList);
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: notificationKeys.all });
+    }
+  });
+}
