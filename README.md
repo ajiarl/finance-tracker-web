@@ -15,9 +15,14 @@ Aplikasi pencatatan keuangan pribadi dengan estetika **Neobrutalism**.
   - Halaman Login & Register dengan validasi Zod.
   - Integrasi Laravel Sanctum (Stateful Authentication).
   - Fitur Lihat/Sembunyikan Password.
+- **Dashboard & Transaksi**:
+  - Ringkasan saldo, pemasukan, dan pengeluaran riil.
+  - Progress bar anggaran dengan indikator warna dinamis.
+  - **FastAddModal**: Modal input cepat untuk transaksi dengan preset nominal.
+  - Integrasi TanStack Query untuk manajemen cache dan sinkronisasi data.
 - **Layout Sistem**:
   - Topbar dengan navigasi brand.
-  - Bottom Navigation mobile-first.
+  - Bottom Navigation mobile-first dengan z-index management.
   - Struktur AppLayout dengan Outlet dinamis.
 
 ## Aturan Desain Global
