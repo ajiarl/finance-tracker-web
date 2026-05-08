@@ -33,7 +33,7 @@ export default function Button({
       disabled={isDisabled}
       className={[
         'inline-flex items-center justify-center gap-2',
-        'font-bold tracking-wide border-2 border-black',
+        'font-black tracking-wide border-2 border-black rounded-none',
         'shadow-[4px_4px_0px_0px_#000]',
         'transition-all duration-100',
         variants[variant] ?? variants.primary,

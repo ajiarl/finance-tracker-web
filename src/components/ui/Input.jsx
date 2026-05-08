@@ -33,14 +33,14 @@ export default function Input({
           placeholder={placeholder}
           {...registration}
           className={[
-            'w-full px-3 py-2.5 bg-white text-black font-medium',
+            'w-full px-3 py-2.5 bg-white text-black font-black rounded-none',
             'border-2 border-black outline-none',
             'placeholder:text-gray-400',
-            'focus:shadow-[3px_3px_0px_0px_#000]',
+            'focus:shadow-[4px_4px_0px_0px_#000]',
             'transition-shadow duration-100',
             isPassword ? 'pr-10' : '',
             error
-              ? 'border-red-500 bg-red-50 focus:shadow-[3px_3px_0px_0px_rgb(239,68,68)]'
+              ? 'border-red-500 bg-red-50 focus:shadow-[4px_4px_0px_0px_rgb(239,68,68)]'
               : '',
             className,
           ]
