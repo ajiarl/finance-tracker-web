@@ -1,11 +1,17 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import Login from '../pages/auth/Login';
-import Register from '../pages/auth/Register';
-import AppLayout from '../components/layout/AppLayout';
-import Dashboard from '../pages/Dashboard';
-import Transactions from '../pages/Transactions';
-import Budgets from '../pages/Budgets';
-import Settings from '../pages/Settings';
+// src/router/index.jsx
+// Tambahkan ProtectedRoute sebagai wrapper semua halaman dalam AppLayout.
+// Route publik (login/register) tetap bebas diakses.
+
+import { createBrowserRouter, Navigate } from 'react-router-dom'
+import Login from '../pages/auth/Login'
+import Register from '../pages/auth/Register'
+import AppLayout from '../components/layout/AppLayout'
+import Dashboard from '../pages/Dashboard'
+import Transactions from '../pages/Transactions'
+import Budgets from '../pages/Budgets'
+import Accounts from '../pages/Accounts'
+import Settings from '../pages/Settings'
+import ProtectedRoute from './ProtectedRoute'
 
 const router = createBrowserRouter([
   {
@@ -21,30 +27,24 @@ const router = createBrowserRouter([
     element: <Register />,
   },
   {
-    element: <AppLayout />,
+    // Semua halaman di dalam AppLayout dibungkus ProtectedRoute
+    element: (
+      <ProtectedRoute>
+        <AppLayout />
+      </ProtectedRoute>
+    ),
     children: [
-      {
-        path: '/dashboard',
-        element: <Dashboard />,
-      },
-      {
-        path: '/transactions',
-        element: <Transactions />,
-      },
-      {
-        path: '/budgets',
-        element: <Budgets />,
-      },
-      {
-        path: '/settings',
-        element: <Settings />,
-      },
+      { path: '/dashboard',     element: <Dashboard /> },
+      { path: '/transactions',  element: <Transactions /> },
+      { path: '/budgets',       element: <Budgets /> },
+      { path: '/accounts',      element: <Accounts /> },
+      { path: '/settings',      element: <Settings /> },
       {
         path: '/notifications',
-        element: <div className="p-4">Notifikasi (Dalam Pengembangan)</div>,
+        element: <div className="p-4 font-black">Notifikasi (Dalam Pengembangan)</div>,
       },
     ],
   },
-]);
+])
 
-export default router;
+export default router
