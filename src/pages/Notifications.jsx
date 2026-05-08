@@ -1,7 +1,7 @@
 import React from 'react';
 import { Bell, CheckCheck, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useNotificationList, useMarkAsRead, useMarkAllAsRead } from '../hooks/useNotifications';
+import { useNotificationList, useMarkAsRead, useMarkAllAsRead } from '../hooks/useNotifications.jsx';
 import NotificationList from '../components/notifications/NotificationList';
 
 export default function Notifications() {

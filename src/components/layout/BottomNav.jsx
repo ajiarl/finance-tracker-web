@@ -4,7 +4,7 @@
 
 import { NavLink } from 'react-router-dom'
 import { Home, ArrowLeftRight, Target, Settings, Wallet, Bell } from 'lucide-react'
-import { useNotifications } from '../../hooks/useNotifications'
+import { useNotifications } from '../../hooks/useNotifications.jsx'
 import NotificationBadge from '../notifications/NotificationBadge'
 
 const navItems = [

@@ -5,7 +5,7 @@
 import { Outlet, Link } from 'react-router-dom'
 import { Bell } from 'lucide-react'
 import BottomNav from './BottomNav'
-import { useNotifications } from '../../hooks/useNotifications'
+import { useNotifications } from '../../hooks/useNotifications.jsx'
 import NotificationBadge from '../notifications/NotificationBadge'
 
 export default function AppLayout() {
