@@ -10,6 +10,7 @@ import Dashboard from '../pages/Dashboard'
 import Transactions from '../pages/Transactions'
 import Budgets from '../pages/Budgets'
 import Accounts from '../pages/Accounts'
+import Categories from '../pages/Categories'
 import Settings from '../pages/Settings'
 import ProtectedRoute from './ProtectedRoute'
 
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
       { path: '/transactions',  element: <Transactions /> },
       { path: '/budgets',       element: <Budgets /> },
       { path: '/accounts',      element: <Accounts /> },
+      { path: '/categories',    element: <Categories /> },
       { path: '/settings',      element: <Settings /> },
       {
         path: '/notifications',
