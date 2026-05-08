@@ -28,9 +28,9 @@ export default function AppLayout() {
           <Link
             to="/notifications"
             aria-label="Notifikasi"
-            className="relative flex items-center justify-center w-9 h-9 border-2 border-black bg-white shadow-[2px_2px_0px_0px_#000] hover:translate-x-px hover:translate-y-px hover:shadow-[1px_1px_0px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
+            className="relative flex items-center justify-center w-9 h-9 border-2 border-black bg-white rounded-none shadow-[4px_4px_0px_0px_#000] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none transition-all duration-100"
           >
-            <Bell size={18} strokeWidth={2} className="text-black" />
+            <Bell size={18} strokeWidth={2.5} className="text-black" />
           </Link>
 
         </div>

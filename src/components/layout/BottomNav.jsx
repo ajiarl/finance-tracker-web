@@ -3,12 +3,13 @@
 // berupa kotak warna solid bergaya "ditekan" menggunakan hard shadow kecil.
 
 import { NavLink } from 'react-router-dom'
-import { Home, ArrowLeftRight, Target, Settings } from 'lucide-react'
+import { Home, ArrowLeftRight, Target, Settings, Wallet } from 'lucide-react'
 
 const navItems = [
   { to: '/dashboard',    label: 'Beranda',    Icon: Home           },
   { to: '/transactions', label: 'Transaksi',  Icon: ArrowLeftRight },
   { to: '/budgets',      label: 'Anggaran',   Icon: Target         },
+  { to: '/accounts',     label: 'Akun',       Icon: Wallet         },
   { to: '/settings',     label: 'Pengaturan', Icon: Settings       },
 ]
 
@@ -32,16 +33,16 @@ export default function BottomNav() {
                 <>
                   <span
                     className={[
-                      'flex items-center justify-center w-9 h-9',
+                      'flex items-center justify-center w-9 h-9 rounded-none',
                       'transition-all duration-100',
                       isActive
-                        ? 'bg-[#FAFF00] border-2 border-black shadow-[2px_2px_0px_0px_#000] translate-x-px translate-y-px'
+                        ? 'bg-[#FAFF00] border-2 border-black shadow-[2px_2px_0px_0px_#000]'
                         : '',
                     ].join(' ')}
                   >
-                    <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+                    <Icon size={18} strokeWidth={isActive ? 3 : 2} />
                   </span>
-                  <span className={isActive ? 'text-black' : 'text-gray-400'}>
+                  <span className={isActive ? 'text-black font-black' : 'text-gray-400 font-bold'}>
                     {label}
                   </span>
                 </>
