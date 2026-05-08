@@ -85,16 +85,16 @@ export default function Register() {
       />
 
       {/* Card */}
-      <div className="relative w-full max-w-md bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000]">
+      <div className="relative w-full max-w-md bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] rounded-none">
 
         {/* Card Header */}
-        <div className="bg-black px-6 py-4">
+        <div className="bg-black px-6 py-4 rounded-none">
           <div className="flex items-center gap-2">
             <h1 className="text-white font-black text-xl tracking-tight uppercase">
               Finance Tracker
             </h1>
           </div>
-          <p className="text-gray-400 text-xs mt-0.5 text-left">
+          <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-0.5 text-left">
             Catat. Pantau. Kendali keuanganmu.
           </p>
         </div>
@@ -104,13 +104,13 @@ export default function Register() {
           <h2 className="text-black font-black text-2xl uppercase mb-1">
             Daftar
           </h2>
-          <p className="text-gray-500 text-sm mb-6">
+          <p className="text-gray-400 text-xs font-black uppercase tracking-widest mb-6">
             Buat akun baru dan mulai catat keuanganmu
           </p>
 
           {/* Server Error */}
           {serverError && (
-            <div className="mb-4 px-3 py-2.5 bg-red-50 border-2 border-red-500 text-red-600 text-sm font-semibold">
+            <div className="mb-4 px-3 py-2.5 bg-red-50 border-2 border-red-500 text-red-600 text-xs font-black uppercase tracking-tight rounded-none">
               {serverError}
             </div>
           )}
@@ -157,7 +157,7 @@ export default function Register() {
               variant="primary"
               size="lg"
               loading={isSubmitting}
-              className="w-full mt-2 uppercase tracking-widest"
+              className="w-full mt-2 uppercase tracking-widest h-14"
             >
               {isSubmitting ? 'Mendaftarkan...' : 'Buat Akun →'}
             </Button>
@@ -165,12 +165,12 @@ export default function Register() {
         </div>
 
         {/* Card Footer */}
-        <div className="px-6 py-4 border-t-2 border-black bg-gray-50 text-center">
-          <p className="text-sm text-gray-600">
+        <div className="px-6 py-4 border-t-4 border-black bg-gray-50 text-center rounded-none">
+          <p className="text-sm text-black font-black uppercase tracking-tight">
             Sudah punya akun?{' '}
             <Link
               to="/login"
-              className="font-black text-black underline decoration-2 underline-offset-2 hover:text-[#333] transition-colors"
+              className="font-black text-black underline decoration-2 underline-offset-4 hover:text-gray-600 transition-colors"
             >
               Masuk di sini
             </Link>
@@ -179,7 +179,7 @@ export default function Register() {
       </div>
 
       {/* Bottom decorative label */}
-      <p className="fixed bottom-4 right-4 text-[10px] font-bold text-black/40 uppercase tracking-widest">
+      <p className="fixed bottom-4 right-4 text-[10px] font-black text-black/40 uppercase tracking-widest">
         Finance Tracker v1.0
       </p>
     </div>
