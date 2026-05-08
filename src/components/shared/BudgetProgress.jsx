@@ -76,7 +76,13 @@ export default function BudgetProgress() {
     return null; // Sembunyikan sepenuhnya jika tidak ada anggaran
   }
 
-  const maxPercentage = budgets.length > 0 ? Math.max(...budgets.map(b => b.percentage || 0)) : 0;
+  const maxPercentage = budgets.length > 0 
+    ? Math.max(...budgets.map(b => {
+        const amount = Number(b.amount) || 0;
+        const spent = Number(b.spent ?? b.spent_amount) || 0;
+        return b.percentage_used ?? b.percentage ?? (amount > 0 ? Math.round((spent / amount) * 100) : 0);
+      })) 
+    : 0;
 
   const getStatusConfig = () => {
     if (maxPercentage >= 100) {

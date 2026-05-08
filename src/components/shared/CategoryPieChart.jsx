@@ -40,11 +40,12 @@ const buildOptions = (total) => ({
   responsive: true,
   maintainAspectRatio: true,
   cutout: '55%',
+  layout: {
+    padding: 10 // Beri ruang agar border/offset tidak terpotong
+  },
   plugins: {
     legend: { display: false },
     tooltip: {
-      // ✅ FIX: 'nearest' membuat tooltip muncul dekat slice yang di-hover,
-      // bukan di tengah chart — tidak akan menimpa area kosong tengah lagi.
       position: 'nearest',
       backgroundColor: '#fff',
       borderColor: '#000',
@@ -62,7 +63,6 @@ const buildOptions = (total) => ({
         family: "'Plus Jakarta Sans', sans-serif",
       },
       padding: 10,
-      // ✅ FIX: xAlign & yAlign auto agar tooltip keluar ke sisi luar slice
       xAlign: 'center',
       yAlign: 'bottom',
       callbacks: {
@@ -133,37 +133,39 @@ export default function CategoryPieChart({ categories }) {
         </span>
       </div>
 
-      <div className="p-4 flex flex-col gap-4">
+      <div className="p-6 flex flex-col items-center justify-center gap-6">
 
-        {/* ── Doughnut — lubang tengah KOSONG, tidak ada overlay ── */}
-        <div className="mx-auto" style={{ width: 240, height: 240 }}>
+        {/* ── Doughnut — Perfectly Centered ── */}
+        <div className="relative mx-auto" style={{ width: '100%', maxWidth: 280, height: 280 }}>
           <Doughnut data={data} options={options} />
         </div>
 
-        {/* ── Custom Legend ── */}
-        <ul className="flex flex-col gap-2">
-          {categories.map((cat, i) => (
-            <li key={cat.label} className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <span
-                  className="flex-shrink-0 w-3 h-3 border-2 border-black rounded-none"
-                  style={{ backgroundColor: NEO_COLORS[i] ?? '#ccc' }}
-                />
-                <span className="text-xs font-black text-black truncate uppercase tracking-tight">
-                  {cat.label}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <span className="text-[10px] text-gray-400 font-black uppercase">
-                  {formatIDR(cat.value)}
-                </span>
-                <span className="text-xs font-black text-black w-10 text-right">
-                  {pct(cat.value, total)}%
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
+        {/* ── Custom Legend — Centered Below the Chart ── */}
+        <div className="w-full border-t-2 border-black pt-6">
+          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+            {categories.map((cat, i) => (
+              <li key={cat.label} className="flex items-center justify-between gap-3 group">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span
+                    className="flex-shrink-0 w-3 h-3 border-2 border-black rounded-none transition-transform group-hover:rotate-45"
+                    style={{ backgroundColor: NEO_COLORS[i] ?? '#ccc' }}
+                  />
+                  <span className="text-[11px] font-black text-black truncate uppercase tracking-tight">
+                    {cat.label}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className="text-[10px] text-gray-400 font-black uppercase">
+                    {formatIDR(cat.value)}
+                  </span>
+                  <span className="text-xs font-black text-black w-10 text-right">
+                    {pct(cat.value, total)}%
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
 
       </div>
     </div>
