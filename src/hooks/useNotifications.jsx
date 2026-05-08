@@ -62,10 +62,15 @@ export function useNotifications(enabled = true) {
         const isBudgetAlert = latest.type === 'budget_alert';
         const isCritical = isBudgetAlert && (latest.data?.severity === 'critical' || (latest.data?.percentage_used ?? 0) >= 100);
         const isWarning = isBudgetAlert && (latest.data?.severity === 'warning' || (latest.data?.percentage_used ?? 0) >= 80);
+        const isInfo = !isCritical && !isWarning;
 
         if (isCritical) {
           new Audio(ALERT_SOUND).play().catch(() => {});
         }
+
+        // Determinasu warna header berdasarkan tingkat keparahan
+        const headerBg = isCritical ? 'bg-[#FF0000]' : isWarning ? 'bg-[#FAFF00]' : 'bg-[#00E0FF]';
+        const headerText = isCritical ? 'text-white' : 'text-black';
 
         toast.custom((t) => (
           <div
@@ -75,36 +80,37 @@ export function useNotifications(enabled = true) {
             }}
             className={`
               ${t.visible ? 'animate-in slide-in-from-top-full' : 'animate-out fade-out-0 slide-out-to-top-full'}
-              max-w-md w-full border-4 border-black shadow-[8px_8px_0px_0px_#000] p-4 flex flex-col gap-2 rounded-none cursor-pointer pointer-events-auto transition-all
-              ${isCritical ? 'bg-[#FF0000] text-white' : isWarning ? 'bg-[#FAFF00] text-black' : 'bg-white text-black'}
+              max-w-md w-full bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000] rounded-none cursor-pointer pointer-events-auto transition-all overflow-hidden
             `}
           >
-            <div className="flex items-center justify-between border-b-2 border-black pb-2 mb-1">
+            {/* Title Bar - Conditional Color */}
+            <div className={`flex items-center justify-between p-3 border-b-4 border-black ${headerBg} ${headerText}`}>
               <div className="flex items-center gap-2">
                 <h4 className="font-black text-sm uppercase tracking-tighter italic">
-                  {latest.title || (isBudgetAlert ? 'ANGGARAN KRITIS' : 'NOTIFIKASI BARU')}
+                  {latest.title || (isBudgetAlert ? 'ANGGARAN' : 'NOTIFIKASI')}
                 </h4>
               </div>
               <button 
                 onClick={(e) => { e.stopPropagation(); toast.dismiss(t.id); }}
-                className="w-8 h-8 border-2 border-black bg-white text-black flex items-center justify-center font-black hover:bg-black hover:text-white transition-colors rounded-none"
+                className="w-7 h-7 border-2 border-black bg-white text-black flex items-center justify-center font-black hover:invert transition-all rounded-none"
               >✕</button>
             </div>
             
-            <div className="py-1">
-              <p className="text-xs font-black leading-tight uppercase tracking-wide">
+            {/* Body - Always White */}
+            <div className="p-4 flex flex-col gap-3">
+              <p className="text-xs font-black leading-tight uppercase tracking-wide text-black">
                 {latest.message}
               </p>
-            </div>
 
-            <div className="mt-2 flex items-center justify-between">
-              <div className="text-[9px] font-black uppercase bg-black text-white px-2 py-1 flex items-center gap-1">
-                {isBudgetAlert ? 'PERIKSA SEKARANG' : 'LIHAT DETAIL'} 
-                <span className="animate-pulse">→</span>
+              <div className="flex items-center justify-between">
+                <div className="text-[9px] font-black uppercase bg-black text-white px-2 py-1 flex items-center gap-1">
+                  {isBudgetAlert ? 'PERIKSA SEKARANG' : 'LIHAT DETAIL'} 
+                  <span className="animate-pulse">→</span>
+                </div>
+                {isCritical && (
+                  <span className="text-[10px] font-black text-red-600 uppercase animate-bounce">PENTING!</span>
+                )}
               </div>
-              {isCritical && (
-                <span className="text-[10px] font-black uppercase animate-bounce">PENTING!</span>
-              )}
             </div>
           </div>
         ), { 
