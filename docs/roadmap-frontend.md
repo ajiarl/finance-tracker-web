@@ -395,7 +395,7 @@ src/
 
 ---
 
-## FASE 8 — Supporting: Import CSV [NEXT GOAL]
+## FASE 8 — Supporting: Import CSV [DONE]
 > Estimasi: 4–5 hari | Kompleks karena multi-step flow
 
 ### 8.1 Step 1 — Upload File
@@ -586,8 +586,8 @@ FASE 4: Akun            ██████░░░░░░░░░░░░�
 FASE 5: Kategori        ████░░░░░░░░░░░░░░░░░░░░  (2 hari)
 FASE 6: Budget          ████████████████████████  (DONE)
 FASE 7: Notifikasi      ████████████████████████  (DONE)
-FASE 8: Import CSV      ██████████░░░░░░░░░░░░░░  (NEXT GOAL)
-FASE 9: Reports         ████░░░░░░░░░░░░░░░░░░░░  (2 hari)
+FASE 8: Import CSV      ████████████████████████  (DONE)
+FASE 9: Reports         ████░░░░░░░░░░░░░░░░░░░░  (NEXT GOAL)
 FASE 10: AI Insights    ████████░░░░░░░░░░░░░░░░  (3-4 hari)
 FASE 11: Settings       ████░░░░░░░░░░░░░░░░░░░░  (1-2 hari)
 FASE 12: Polish         ██████████░░░░░░░░░░░░░░  (3-5 hari)
