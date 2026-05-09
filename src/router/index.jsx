@@ -14,6 +14,7 @@ import Categories from '../pages/Categories'
 import Notifications from '../pages/Notifications'
 import Settings from '../pages/Settings'
 import ImportFlow from '../pages/ImportFlow'
+import Reports from '../pages/Reports'
 import ProtectedRoute from './ProtectedRoute'
 
 const router = createBrowserRouter([
@@ -45,6 +46,7 @@ const router = createBrowserRouter([
       { path: '/notifications', element: <Notifications /> },
       { path: '/settings',      element: <Settings /> },
       { path: '/import',        element: <ImportFlow /> },
+      { path: '/reports',       element: <Reports /> },
     ],
   },
 ])

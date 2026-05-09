@@ -3,7 +3,7 @@
 // berupa kotak warna solid bergaya "ditekan" menggunakan hard shadow kecil.
 
 import { NavLink } from 'react-router-dom'
-import { Home, ArrowLeftRight, Target, Settings, Wallet, Bell } from 'lucide-react'
+import { Home, ArrowLeftRight, Target, Settings, Wallet, Bell, BarChart3 } from 'lucide-react'
 import { useNotifications } from '../../hooks/useNotifications.jsx'
 import NotificationBadge from '../notifications/NotificationBadge'
 
@@ -12,6 +12,7 @@ const navItems = [
   { to: '/transactions', label: 'Transaksi',  Icon: ArrowLeftRight },
   { to: '/budgets',      label: 'Anggaran',   Icon: Target         },
   { to: '/accounts',     label: 'Akun',       Icon: Wallet         },
+  { to: '/reports',      label: 'Laporan',    Icon: BarChart3      },
   { to: '/notifications', label: 'Notif',      Icon: Bell           },
   { to: '/settings',     label: 'Atur',       Icon: Settings       },
 ]
