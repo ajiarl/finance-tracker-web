@@ -439,7 +439,7 @@ src/
 
 ---
 
-## FASE 9 — Supporting: Laporan (Reports)
+## FASE 9 — Supporting: Laporan (Reports) [DONE]
 > Estimasi: 2 hari
 
 ### 9.1 Halaman Reports
@@ -456,7 +456,7 @@ src/
 
 ---
 
-## FASE 10 — Supporting: AI Insights
+## FASE 10 — Supporting: AI Insights [NEXT GOAL]
 > Estimasi: 3–4 hari
 
 ### 10.1 Halaman Insights — Summary Cards
@@ -587,8 +587,8 @@ FASE 5: Kategori        ████░░░░░░░░░░░░░░�
 FASE 6: Budget          ████████████████████████  (DONE)
 FASE 7: Notifikasi      ████████████████████████  (DONE)
 FASE 8: Import CSV      ████████████████████████  (DONE)
-FASE 9: Reports         ████░░░░░░░░░░░░░░░░░░░░  (NEXT GOAL)
-FASE 10: AI Insights    ████████░░░░░░░░░░░░░░░░  (3-4 hari)
+FASE 9: Reports         ████████████████████████  (DONE)
+FASE 10: AI Insights    ████████░░░░░░░░░░░░░░░░  (NEXT GOAL)
 FASE 11: Settings       ████░░░░░░░░░░░░░░░░░░░░  (1-2 hari)
 FASE 12: Polish         ██████████░░░░░░░░░░░░░░  (3-5 hari)
 
