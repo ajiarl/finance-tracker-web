@@ -312,7 +312,7 @@ src/
 ### 5.2 Form Kategori [DONE]
 **Apa:** Modal create/edit: nama, tipe, ikon (text input untuk nama icon), color picker (harus format `#RRGGBB`).
 
-**API:**
+**APIsssss:**
 - `POST /api/categories`
 - `PATCH /api/categories/{id}`
 - `DELETE /api/categories/{id}` → 204 No Content
