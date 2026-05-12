@@ -10,6 +10,7 @@ import {
 import { TrendingUp, TrendingDown, Wallet, PieChart as PieIcon, Calendar } from 'lucide-react';
 import { useAnalytics } from '../hooks/useAnalytics';
 import { cn } from '../lib/utils';
+import AiInsightsPanel from '../components/reports/AiInsightsPanel';
 
 const DATE_PRESETS = [
   { id: 'this_month', label: 'Bulan Ini' },
@@ -123,6 +124,12 @@ export default function Reports() {
           className="bg-amber-50"
         />
       </div>
+
+      {/* AI Insights — Pak Hemat */}
+      <AiInsightsPanel
+        startDate={format(dateRange.start, 'yyyy-MM-dd')}
+        endDate={format(dateRange.end, 'yyyy-MM-dd')}
+      />
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
